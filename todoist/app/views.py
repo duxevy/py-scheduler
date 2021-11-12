@@ -9,10 +9,12 @@ from .serializers import *
 
 
 def index(request):
-    return render(request, 'app/index.html', {'title': 'Главная страница'})
+    return render(request, 'app/index.html', {'title': 'Главная страница', 'user': request.user})
 
 
 class NoteView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         # Забираем из базы все опубликованные записи (QuerySet)
         notes = Note.objects.filter(public=True).order_by('-date_add')
@@ -22,6 +24,8 @@ class NoteView(APIView):
 
 
 class NoteDetailView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, note_id):
         # Берем одну опубликованную запись
         note = Note.objects.filter(pk=note_id, public=True).first()
@@ -63,6 +67,10 @@ class NoteEditorView(APIView):
             return Response(new_note.data, status=status.HTTP_200_OK)
         else:
             return Response(new_note.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NoteDeleteView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     def delete(self, request, note_id):
         # Метод для удаления записи

@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 # DRF imports
 from rest_framework import serializers
 
@@ -30,6 +32,9 @@ class NoteDetailSerializer(serializers.ModelSerializer):
 
 
 class NoteEditorSerializer(serializers.ModelSerializer):
+    # Имя автора вместо id
+    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
+
     class Meta:
         model = Note
         fields = "__all__"
