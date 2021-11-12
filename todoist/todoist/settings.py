@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from django.conf.locale.ru import formats as ru_formats
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+ru_formats.DATETIME_FORMAT = "d.m.Y H:i:s"
 SECRET_KEY = 'django-insecure-piqhj@jx(v1m4r8kgh1^tdj64^up@xe9&rk48)u(b*n!o)g(+9'
 DEBUG = True
 
