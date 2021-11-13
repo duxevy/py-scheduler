@@ -37,5 +37,5 @@ class NoteEditorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Note
-        fields = "__all__"
+        fields = '__all__'
         read_only_fields = ['date_add', 'author', ]

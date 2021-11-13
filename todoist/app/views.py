@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 from .serializers import *
 
@@ -12,12 +13,19 @@ def index(request):
     return render(request, 'app/index.html', {'title': 'Главная страница', 'user': request.user})
 
 
+# Сделать по токену
+class IsOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return True
+
+
 class NoteView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         # Забираем из базы все опубликованные записи (QuerySet)
-        notes = Note.objects.filter(public=True).order_by('-date_add')
+        #  'important'
+        notes = Note.objects.filter(public=True).order_by('-important', '-date_add')
         # Работа сериализатора
         serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data)
@@ -54,7 +62,7 @@ class NoteAddView(APIView):
 
 
 class NoteEditorView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsOwner,)
 
     def patch(self, request, note_id):
         # Метод редактирования
@@ -63,7 +71,7 @@ class NoteEditorView(APIView):
         if not note:
             # Отработка исключений
             raise NotFound(f'Записи с id={note_id} для пользователя {request.user.username} не существует')
-        #
+
         new_note = NoteEditorSerializer(note, data=request.data, partial=True)
         # Валидатор
         if new_note.is_valid():
