@@ -37,7 +37,7 @@ class NoteDetailView(APIView):
         return Response(serializer.data)
 
 
-class NoteEditorView(APIView):
+class NoteAddView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -51,6 +51,10 @@ class NoteEditorView(APIView):
             return Response(new_note.data, status=status.HTTP_201_CREATED)
         else:
             return Response(new_note.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NoteEditorView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     def patch(self, request, note_id):
         # Метод редактирования
